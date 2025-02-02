@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-mykso-dev-argocd
+  namespace: system-argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  annotations:
+    myks.dev/environment: mykso-dev
+    app.kubernetes.io/source: git@github.com:Zebradil/myks-389-repro.git
+spec:
+  project: env-mykso-dev
+  destination:
+    name: mykso-dev
+    namespace: argocd
+  source:
+    path: rendered/envs/mykso-dev/argocd
+    plugin:
+      name: argocd-vault-plugin-v1.0.0
+    repoURL: git@github.com:Zebradil/myks-389-repro.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
